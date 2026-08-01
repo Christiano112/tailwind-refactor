@@ -1,5 +1,11 @@
 # tailwind-refactor
 
+## 0.1.3
+
+### Patch Changes
+
+- fix: bundle picocolors inline to resolve ESM dynamic require runtime error in npx environment
+
 ## 0.1.2
 
 ### Patch Changes

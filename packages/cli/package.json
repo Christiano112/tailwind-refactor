@@ -1,13 +1,13 @@
 {
   "name": "tailwind-refactor",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "description": "CLI tool for tailwind-refactor static analysis and refactoring engine",
   "author": "Christian Enyia <christianowebdev@gmail.com>",
   "license": "MIT",
   "bin": {
-    "tailwind-refactor": "dist/cli.js",
-    "tw-refactor": "dist/cli.js"
+    "tailwind-refactor": "dist/cli.cjs",
+    "tw-refactor": "dist/cli.cjs"
   },
   "files": [
     "dist",

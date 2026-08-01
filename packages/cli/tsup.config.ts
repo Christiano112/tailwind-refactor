@@ -12,7 +12,7 @@ export default defineConfig({
   clean: true,
   shims: true,
   tsconfig: 'tsconfig.json',
-  noExternal: [/^@tailwind-refactor\//, 'postcss'],
+  noExternal: [/^@tailwind-refactor\//, 'postcss', 'picocolors'],
   external: ['ts-morph', 'typescript'],
   splitting: false,
   sourcemap: false,
