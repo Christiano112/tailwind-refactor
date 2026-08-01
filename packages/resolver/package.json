@@ -1,0 +1,29 @@
+{
+  "name": "@tailwind-refactor/resolver",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Tailwind CSS theme token resolver supporting v3 and v4 scales",
+  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tailwind-refactor/core": "workspace:*",
+    "postcss": "^8.5.23"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

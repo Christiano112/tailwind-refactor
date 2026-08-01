@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TailwindRefactorConfig",
+  "type": "object",
+  "properties": {
+    "extends": {
+      "type": "string",
+      "enum": ["recommended", "strict", "a11y"],
+      "description": "Rule preset bundle to extend"
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "enum": ["off", "warn", "error"]
+      },
+      "description": "Individual rule severity toggles"
+    },
+    "ignore": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Glob patterns to ignore"
+    },
+    "confidenceThreshold": {
+      "type": "string",
+      "enum": ["safe", "suggestion", "experimental"],
+      "description": "Minimum confidence level required for automatic patching"
+    },
+    "tailwindVersion": {
+      "type": "string",
+      "enum": ["v3", "v4", "auto"],
+      "description": "Tailwind CSS scale version"
+    }
+  }
+}

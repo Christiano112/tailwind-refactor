@@ -1,0 +1,45 @@
+{
+  "name": "tailwind-refactor-monorepo",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.0.0",
+  "description": "Tailwind CSS refactoring engine for production codebases",
+  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "turbo build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "bench": "vitest bench",
+    "lint": "turbo lint -- --fix",
+    "check": "biome check --write --unsafe .",
+    "format": "biome format --write .",
+    "clean": "turbo clean",
+    "version": "changeset version",
+    "release": "changeset publish"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.6",
+    "@changesets/cli": "^2.27.10",
+    "@tailwind-refactor/config": "workspace:*",
+    "@tailwind-refactor/core": "workspace:*",
+    "@tailwind-refactor/ignore": "workspace:*",
+    "@tailwind-refactor/logger": "workspace:*",
+    "@tailwind-refactor/parser": "workspace:*",
+    "@tailwind-refactor/plugin-api": "workspace:*",
+    "@tailwind-refactor/resolver": "workspace:*",
+    "@tailwind-refactor/rules": "workspace:*",
+    "@types/node": "^22.10.2",
+    "fast-check": "^4.9.0",
+    "tailwind-refactor": "workspace:*",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2",
+    "vite": "^7.0.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=20.19.0",
+    "pnpm": ">=8.0.0"
+  }
+}

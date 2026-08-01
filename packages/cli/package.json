@@ -1,0 +1,45 @@
+{
+  "name": "tailwind-refactor",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "CLI tool for tailwind-refactor static analysis and refactoring engine",
+  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "license": "MIT",
+  "bin": {
+    "tailwind-refactor": "./dist/cli.js",
+    "tw-refactor": "./dist/cli.js"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup && tsc -b"
+  },
+  "dependencies": {
+    "@tailwind-refactor/config": "workspace:*",
+    "@tailwind-refactor/core": "workspace:*",
+    "@tailwind-refactor/ignore": "workspace:*",
+    "@tailwind-refactor/logger": "workspace:*",
+    "@tailwind-refactor/parser": "workspace:*",
+    "@tailwind-refactor/plugin-api": "workspace:*",
+    "@tailwind-refactor/resolver": "workspace:*",
+    "@tailwind-refactor/rules": "workspace:*",
+    "commander": "^13.1.0",
+    "diff": "^7.0.0",
+    "glob": "^11.0.1",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/diff": "^7.0.0",
+    "@types/node": "^22.10.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "@tailwind-refactor/plugin-api",
+  "version": "0.1.0",
+  "description": "Public Plugin, Reporter, and Data Model API contracts for tailwind-refactor",
+  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

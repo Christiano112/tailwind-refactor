@@ -1,0 +1,33 @@
+{
+  "name": "@tailwind-refactor/rules",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Transformation rules and rule execution engine for tailwind-refactor",
+  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tailwind-refactor/config": "workspace:*",
+    "@tailwind-refactor/core": "workspace:*",
+    "@tailwind-refactor/ignore": "workspace:*",
+    "@tailwind-refactor/logger": "workspace:*",
+    "@tailwind-refactor/parser": "workspace:*",
+    "@tailwind-refactor/resolver": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

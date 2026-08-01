@@ -1,0 +1,37 @@
+name: 'Tailwind Refactor Action'
+description: 'Automated static analysis and utility refactoring engine for Tailwind CSS codebases'
+author: 'Christian Enyia'
+branding:
+  icon: 'zap'
+  color: 'blue'
+
+inputs:
+  directory:
+    description: 'Directory to scan or refactor'
+    required: false
+    default: 'src'
+  config:
+    description: 'Path to custom tailwind-refactor configuration file'
+    required: false
+  mode:
+    description: 'Execution mode: "scan" or "fix"'
+    required: false
+    default: 'scan'
+  parallel:
+    description: 'Enable parallel multi-threaded scanning across CPU cores'
+    required: false
+    default: 'true'
+  sarif_report:
+    description: 'Generate SARIF 2.1.0 security telemetry output'
+    required: false
+    default: 'true'
+
+outputs:
+  transformations:
+    description: 'Total number of non-canonical Tailwind refactoring opportunities detected'
+  sarif_file:
+    description: 'Path to generated SARIF report file'
+
+runs:
+  using: 'node20'
+  main: 'dist/action.js'

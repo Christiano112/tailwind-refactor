@@ -1,0 +1,50 @@
+{
+  "name": "tailwind-refactor-vscode",
+  "displayName": "Tailwind Refactor Engine",
+  "publisher": "ChristianEnyia",
+  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "license": "MIT",
+  "version": "0.1.0",
+  "description": "VS Code extension providing real-time inline diagnostics, token suggestions, and quick fixes for Tailwind CSS",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Linters",
+    "Formatters",
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact",
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "tailwind-refactor.analyzeFile",
+        "title": "Tailwind Refactor: Analyze Current File"
+      },
+      {
+        "command": "tailwind-refactor.analyzeWorkspace",
+        "title": "Tailwind Refactor: Analyze Workspace"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@tailwind-refactor/core": "workspace:*",
+    "@tailwind-refactor/parser": "workspace:*",
+    "@tailwind-refactor/resolver": "workspace:*",
+    "@tailwind-refactor/rules": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.7.2"
+  }
+}

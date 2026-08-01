@@ -1,0 +1,30 @@
+{
+  "name": "@tailwind-refactor/ignore",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "File glob ignores and inline disable comments parser for tailwind-refactor",
+  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tailwind-refactor/core": "workspace:*",
+    "glob": "^11.0.0",
+    "minimatch": "^10.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

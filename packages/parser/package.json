@@ -1,0 +1,30 @@
+{
+  "name": "@tailwind-refactor/parser",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "TSX/JSX AST candidate parser and dynamic expression analyzer",
+  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tailwind-refactor/core": "workspace:*",
+    "@tailwind-refactor/logger": "workspace:*",
+    "ts-morph": "^25.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
