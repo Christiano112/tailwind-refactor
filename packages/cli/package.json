@@ -1,6 +1,6 @@
 {
   "name": "tailwind-refactor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "CLI tool for tailwind-refactor static analysis and refactoring engine",
   "author": "Christian Enyia <christianowebdev@gmail.com>",
