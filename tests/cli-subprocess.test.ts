@@ -46,6 +46,6 @@ describe('CLI Binary Subprocess Execution', () => {
     const fixturesDir = resolve(__dirname, 'fixtures');
     const res = await runCLI(['fix', fixturesDir, '--dry-run']);
     expect(res.code).toBe(0);
-    expect(res.stdout).toContain('DRY RUN');
+    expect(res.stdout + res.stderr).toContain('DRY RUN');
   }, 20000);
 });

@@ -13,6 +13,7 @@ export default defineConfig({
   shims: true,
   tsconfig: 'tsconfig.json',
   noExternal: [/^@tailwind-refactor\//, 'postcss'],
+  external: ['ts-morph', 'typescript'],
   splitting: false,
   sourcemap: false,
 });

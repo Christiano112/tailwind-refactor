@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "version": "0.1.0",
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@11.0.0",
   "description": "Tailwind CSS refactoring engine for production codebases",
   "author": "Christian Enyia <christianowebdev@gmail.com>",
   "license": "MIT",
@@ -40,6 +40,6 @@
   },
   "engines": {
     "node": ">=20.19.0",
-    "pnpm": ">=8.0.0"
+    "pnpm": ">=11.0.0"
   }
 }
