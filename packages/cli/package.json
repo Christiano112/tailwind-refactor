@@ -1,6 +1,6 @@
 {
   "name": "tailwind-refactor",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "CLI tool for tailwind-refactor static analysis and refactoring engine",
   "author": "Christian Enyia <christianowebdev@gmail.com>",
@@ -28,14 +28,6 @@
     "build": "tsup && tsc -b"
   },
   "dependencies": {
-    "@tailwind-refactor/config": "workspace:*",
-    "@tailwind-refactor/core": "workspace:*",
-    "@tailwind-refactor/ignore": "workspace:*",
-    "@tailwind-refactor/logger": "workspace:*",
-    "@tailwind-refactor/parser": "workspace:*",
-    "@tailwind-refactor/plugin-api": "workspace:*",
-    "@tailwind-refactor/resolver": "workspace:*",
-    "@tailwind-refactor/rules": "workspace:*",
     "commander": "^13.1.0",
     "diff": "^7.0.0",
     "glob": "^11.0.1",
@@ -44,6 +36,14 @@
     "typescript": "^5.7.2"
   },
   "devDependencies": {
+    "@tailwind-refactor/config": "workspace:*",
+    "@tailwind-refactor/core": "workspace:*",
+    "@tailwind-refactor/ignore": "workspace:*",
+    "@tailwind-refactor/logger": "workspace:*",
+    "@tailwind-refactor/parser": "workspace:*",
+    "@tailwind-refactor/plugin-api": "workspace:*",
+    "@tailwind-refactor/resolver": "workspace:*",
+    "@tailwind-refactor/rules": "workspace:*",
     "@types/diff": "^7.0.0",
     "@types/node": "^22.10.2",
     "tsup": "^8.3.5"

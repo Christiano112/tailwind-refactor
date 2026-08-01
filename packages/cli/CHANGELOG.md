@@ -1,5 +1,11 @@
 # tailwind-refactor
 
+## 0.1.2
+
+### Patch Changes
+
+- fix: move internal workspace dependencies to devDependencies in standalone CLI package to fix npm workspace protocol installation error
+
 ## 0.1.1
 
 ### Patch Changes
