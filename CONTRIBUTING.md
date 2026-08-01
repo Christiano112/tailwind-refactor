@@ -9,7 +9,7 @@ Thank you for your interest in contributing to **`tailwind-refactor`**! We welco
 ### Prerequisites
 
 - **Node.js**: `>= 20.19.0`
-- **pnpm**: `>= 9.0.0` (required package manager)
+- **pnpm**: `>= 11.0.0` (required package manager)
 
 ### Monorepo Installation
 

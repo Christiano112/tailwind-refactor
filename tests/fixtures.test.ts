@@ -35,7 +35,7 @@ describe('Fixture Project Refactoring Analysis', () => {
     const map = new Map(transformations.map((t) => [t.original, t.replacement]));
     expect(map.get('h-[40px]')).toBe('h-10');
     expect(map.get('p-[16px]')).toBe('p-4');
-    expect(map.get('bg-[#3b82f6]')).toBe('bg-blue-500');
+    expect(map.get('bg-[#3b82f6]')).toBe('bg-primary');
     expect(map.get('rounded-[8px]')).toBe('rounded-lg');
     expect(map.get('text-[16px]')).toBe('text-base');
   });
