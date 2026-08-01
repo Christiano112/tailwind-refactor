@@ -4,7 +4,7 @@
   "publisher": "ChristianEnyia",
   "author": "Christian Enyia <christianowebdev@gmail.com>",
   "license": "MIT",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "VS Code extension providing real-time inline diagnostics, token suggestions, and quick fixes for Tailwind CSS",
   "engines": {
     "vscode": "^1.90.0"

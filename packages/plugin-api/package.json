@@ -1,6 +1,6 @@
 {
   "name": "@tailwind-refactor/plugin-api",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Public Plugin, Reporter, and Data Model API contracts for tailwind-refactor",
   "author": "Christian Enyia <christianowebdev@gmail.com>",
   "license": "MIT",

@@ -1,6 +1,6 @@
 {
   "name": "@tailwind-refactor/rules",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Transformation rules and rule execution engine for tailwind-refactor",
   "author": "Christian Enyia <christianowebdev@gmail.com>",

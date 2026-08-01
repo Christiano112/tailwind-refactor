@@ -1,6 +1,6 @@
 {
   "name": "@tailwind-refactor/logger",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Structured logger and domain error system for tailwind-refactor",
   "author": "Christian Enyia <christianowebdev@gmail.com>",

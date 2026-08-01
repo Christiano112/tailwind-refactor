@@ -1,6 +1,6 @@
 {
   "name": "@tailwind-refactor/ignore",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "File glob ignores and inline disable comments parser for tailwind-refactor",
   "author": "Christian Enyia <christianowebdev@gmail.com>",

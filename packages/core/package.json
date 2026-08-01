@@ -1,6 +1,6 @@
 {
   "name": "@tailwind-refactor/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Core primitives, domain types, AST offset patcher, and analysis cache",
   "author": "Christian Enyia <christianowebdev@gmail.com>",

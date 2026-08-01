@@ -1,6 +1,6 @@
 {
   "name": "@tailwind-refactor/resolver",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Tailwind CSS theme token resolver supporting v3 and v4 scales",
   "author": "Christian Enyia <christianowebdev@gmail.com>",
