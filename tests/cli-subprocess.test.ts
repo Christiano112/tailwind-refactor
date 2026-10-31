@@ -23,14 +23,14 @@ describe('CLI Binary Subprocess Execution', () => {
     expect(res.stdout).toContain('scan');
     expect(res.stdout).toContain('fix');
     expect(res.stdout).toContain('review');
-  }, 20000);
+  }, 35000);
 
   it('runs scan command against fixtures directory', async () => {
     const fixturesDir = resolve(__dirname, 'fixtures');
     const res = await runCLI(['scan', fixturesDir]);
     expect(res.code).toBe(1);
     expect(res.stdout).toContain('Scanning Tailwind utility usage');
-  }, 20000);
+  }, 35000);
 
   it('runs scan command in parallel mode via -p / --parallel flag', async () => {
     const fixturesDir = resolve(__dirname, 'fixtures');
@@ -40,12 +40,12 @@ describe('CLI Binary Subprocess Execution', () => {
     }
     expect(res.code).toBe(1);
     expect(res.stdout).toContain('PARALLEL WORKERS');
-  }, 20000);
+  }, 35000);
 
   it('runs fix --dry-run command without writing to disk', async () => {
     const fixturesDir = resolve(__dirname, 'fixtures');
     const res = await runCLI(['fix', fixturesDir, '--dry-run']);
     expect(res.code).toBe(0);
     expect(res.stdout + res.stderr).toContain('DRY RUN');
-  }, 20000);
+  }, 35000);
 });

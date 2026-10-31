@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "type": "module",
   "description": "Configuration schema, default parameters, and loader for tailwind-refactor",
-  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "author": "Christian Enyia",
   "license": "MIT",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

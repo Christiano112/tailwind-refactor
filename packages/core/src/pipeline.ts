@@ -95,6 +95,29 @@ export interface PipelineOptions {
   onProgress?: (processed: number, total: number, file: string) => void;
 }
 
+/** Segments used by the post-glob filter to exclude non-source paths. */
+const BLOCKED_SEGMENTS = [
+  '/node_modules/',
+  '/dist/',
+  '/.next/',
+  '/.turbo/',
+  '/build/',
+  '/.cache/',
+  '/.git/',
+] as const;
+
+/** Glob ignore patterns passed to the workspace globber. */
+const DEFAULT_IGNORES = [
+  '**/node_modules/**',
+  '**/dist/**',
+  '**/.next/**',
+  '**/.turbo/**',
+  '**/build/**',
+  '**/.cache/**',
+  '**/.git/**',
+  '**/*.min.js',
+] as const;
+
 /**
  * Central unified execution pipeline for all tailwind-refactor operations.
  *
@@ -171,6 +194,33 @@ export class RefactorPipeline {
   }
 
   /**
+   * Resolves and de-duplicates the list of source files to process.
+   *
+   * @remarks
+   * This is the single canonical file-resolution path for both `scan()` and `fix()`.
+   * It applies the glob pattern, workspace ignore list, and the post-glob BLOCKED_SEGMENTS
+   * filter in one place so changes to supported extensions or ignore rules propagate
+   * to every operation automatically.
+   *
+   * @param targetDir     - Root directory relative to the workspace.
+   * @param ignorePattern - Optional extra glob pattern to exclude (from CLI `--ignore`).
+   * @returns Array of file paths that passed all filters.
+   */
+  private async resolveFiles(targetDir: string, ignorePattern?: string): Promise<string[]> {
+    const pattern = `${targetDir}/**/*.{ts,tsx,js,jsx,vue,svelte,astro,html}`;
+    const ignores = ignorePattern
+      ? [ignorePattern, ...DEFAULT_IGNORES]
+      : [...DEFAULT_IGNORES];
+
+    const rawFiles = await this.workspace.glob(pattern, { ignore: ignores });
+
+    return rawFiles.filter((filePath) => {
+      const norm = filePath.replace(/\\/g, '/');
+      return !BLOCKED_SEGMENTS.some((seg) => norm.includes(seg)) && !norm.endsWith('.min.js');
+    });
+  }
+
+  /**
    * Scans all source files in the target directory and returns a complete {@link ScanResult}.
    *
    * @description
@@ -189,46 +239,25 @@ export class RefactorPipeline {
   public async scan(options: PipelineOptions = {}): Promise<ScanResult> {
     const startTime = Date.now();
     const targetDir = options.dir || 'src';
-    const pattern = `${targetDir}/**/*.{ts,tsx,js,jsx,vue,svelte,astro,html}`;
 
-    const defaultIgnores = [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/.next/**',
-      '**/.turbo/**',
-      '**/build/**',
-      '**/.cache/**',
-      '**/.git/**',
-      '**/*.min.js',
-    ];
-
-    const rawFiles = await this.workspace.glob(pattern, {
-      ignore: options.ignorePattern ? [options.ignorePattern, ...defaultIgnores] : defaultIgnores,
-    });
-
-    const files = rawFiles.filter((filePath) => {
-      const norm = filePath.replace(/\\/g, '/');
-      return !(
-        norm.includes('/node_modules/') ||
-        norm.includes('/dist/') ||
-        norm.includes('/.next/') ||
-        norm.includes('/.turbo/') ||
-        norm.includes('/build/') ||
-        norm.includes('/.cache/') ||
-        norm.includes('/.git/') ||
-        norm.endsWith('.min.js')
-      );
-    });
+    const files = await this.resolveFiles(targetDir, options.ignorePattern);
 
     const transformations: Transformation[] = [];
     const diagnostics: Diagnostic[] = [];
     const fileReports: { file: string; count: number; items: Transformation[] }[] = [];
+    let filesIgnored = 0;
 
     // Execute engine scan
     const engine = options.engine;
     if (engine) {
       let processed = 0;
       for (const filePath of files) {
+        if (options.ignoreContext?.isFileIgnored(filePath)) {
+          filesIgnored++;
+          processed++;
+          options.onProgress?.(processed, files.length, filePath);
+          continue;
+        }
         try {
           const rawCode = await this.workspace.readFile(filePath);
           const hasCRLF = rawCode.includes('\r\n');
@@ -269,7 +298,7 @@ export class RefactorPipeline {
 
     const result: ScanResult = {
       filesScanned: files.length,
-      filesIgnored: 0,
+      filesIgnored,
       totalTransformations: transformations.length,
       transformations,
       diagnostics,
@@ -307,39 +336,12 @@ export class RefactorPipeline {
   public async fix(options: PipelineOptions = {}): Promise<FixResult> {
     const startTime = Date.now();
     const targetDir = options.dir || 'src';
-    const pattern = `${targetDir}/**/*.{ts,tsx,js,jsx,vue,svelte,astro,html}`;
 
-    const defaultIgnores = [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/.next/**',
-      '**/.turbo/**',
-      '**/build/**',
-      '**/.cache/**',
-      '**/.git/**',
-      '**/*.min.js',
-    ];
-
-    const rawFiles = await this.workspace.glob(pattern, {
-      ignore: options.ignorePattern ? [options.ignorePattern, ...defaultIgnores] : defaultIgnores,
-    });
-
-    const files = rawFiles.filter((filePath) => {
-      const norm = filePath.replace(/\\/g, '/');
-      return !(
-        norm.includes('/node_modules/') ||
-        norm.includes('/dist/') ||
-        norm.includes('/.next/') ||
-        norm.includes('/.turbo/') ||
-        norm.includes('/build/') ||
-        norm.includes('/.cache/') ||
-        norm.includes('/.git/') ||
-        norm.endsWith('.min.js')
-      );
-    });
+    const files = await this.resolveFiles(targetDir, options.ignorePattern);
 
     let filesFixed = 0;
     let totalTransformationsApplied = 0;
+    const errors: { file: string; message: string }[] = [];
     const engine = options.engine;
 
     if (engine) {
@@ -360,8 +362,11 @@ export class RefactorPipeline {
             filesFixed++;
             totalTransformationsApplied += analysis.length;
           }
-        } catch {
-          // Skip file error
+        } catch (err: unknown) {
+          errors.push({
+            file: filePath,
+            message: err instanceof Error ? err.message : String(err),
+          });
         }
         processed++;
         options.onProgress?.(processed, files.length, filePath);
@@ -373,6 +378,7 @@ export class RefactorPipeline {
       totalTransformationsApplied,
       isDryRun: !!options.dryRun,
       durationMs: Date.now() - startTime,
+      errors,
     };
   }
 }

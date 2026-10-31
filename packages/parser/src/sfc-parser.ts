@@ -28,35 +28,40 @@ export class SFCParser {
       const rawVal = match[1] ?? match[2] ?? match[3] ?? match[4];
       if (!rawVal) continue;
 
-      let cleanVal = rawVal.trim();
-      let valOffset = match.index + fullMatch.indexOf(rawVal);
-      if (
-        (cleanVal.startsWith("'") && cleanVal.endsWith("'")) ||
-        (cleanVal.startsWith('"') && cleanVal.endsWith('"'))
-      ) {
-        valOffset += 1;
-        cleanVal = cleanVal.slice(1, -1).trim();
-      }
-      if (!cleanVal) continue;
+      let valStart = match.index + fullMatch.indexOf(rawVal);
+      let text = rawVal;
 
-      // Add full multi-class string candidate
-      if (cleanVal.includes(' ')) {
+      // Check if wrapped in quotes (e.g. inside { '...' } or { "..." })
+      const trimmed = text.trim();
+      if (
+        (trimmed.startsWith("'") && trimmed.endsWith("'")) ||
+        (trimmed.startsWith('"') && trimmed.endsWith('"'))
+      ) {
+        const quoteStart = text.indexOf(trimmed[0]);
+        valStart += quoteStart + 1;
+        text = trimmed.slice(1, -1);
+      }
+
+      // Add full multi-class string candidate if trimmed has spaces
+      const fullClean = text.trim();
+      if (fullClean.includes(' ')) {
+        const fullStart = valStart + text.indexOf(fullClean);
         stringCandidates.push({
-          value: cleanVal,
+          value: fullClean,
           location: {
-            start: valOffset,
-            end: valOffset + cleanVal.length,
+            start: fullStart,
+            end: fullStart + fullClean.length,
           },
           filePath,
         });
       }
 
-      // Extract individual class tokens
+      // Extract individual class tokens with exact location offsets
       const wordRegex = /\S+/g;
       let wordMatch: RegExpExecArray | null;
-      while ((wordMatch = wordRegex.exec(cleanVal)) !== null) {
+      while ((wordMatch = wordRegex.exec(text)) !== null) {
         const word = wordMatch[0];
-        const wordStart = valOffset + wordMatch.index;
+        const wordStart = valStart + wordMatch.index;
         tokenCandidates.push({
           value: word,
           location: {

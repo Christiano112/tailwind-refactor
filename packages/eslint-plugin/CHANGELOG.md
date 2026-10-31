@@ -1,5 +1,15 @@
 # eslint-plugin-tailwind-refactor
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @tailwind-refactor/core@0.1.2
+  - @tailwind-refactor/parser@0.1.2
+  - @tailwind-refactor/resolver@0.1.2
+  - @tailwind-refactor/rules@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes

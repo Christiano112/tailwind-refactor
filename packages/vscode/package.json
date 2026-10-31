@@ -2,9 +2,9 @@
   "name": "tailwind-refactor-vscode",
   "displayName": "Tailwind Refactor Engine",
   "publisher": "ChristianEnyia",
-  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "author": "Christian Enyia",
   "license": "MIT",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "VS Code extension providing real-time inline diagnostics, token suggestions, and quick fixes for Tailwind CSS",
   "engines": {
     "vscode": "^1.90.0"

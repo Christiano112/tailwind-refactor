@@ -247,6 +247,9 @@ importers:
       '@tailwind-refactor/resolver':
         specifier: workspace:*
         version: link:../resolver
+      minimatch:
+        specifier: ^10.2.5
+        version: 10.2.5
     devDependencies:
       typescript:
         specifier: ^5.7.2

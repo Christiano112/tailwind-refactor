@@ -1,9 +1,9 @@
 {
   "name": "@tailwind-refactor/parser",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "TSX/JSX AST candidate parser and dynamic expression analyzer",
-  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "author": "Christian Enyia",
   "license": "MIT",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

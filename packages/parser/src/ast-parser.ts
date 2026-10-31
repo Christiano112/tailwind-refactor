@@ -130,7 +130,6 @@ export class SourceParser {
     /(?:class(?:Name)?|cva|cn|clsx|twMerge|twJoin|variants|tv|style)\b|\[[a-z0-9#-]+\]/i;
 
   parseCodeWithAnalysis(code: string, filePath: string): ParseResult {
-    code = code.replace(/\r\n/g, '\n');
     const stringCandidates: TailwindCandidate[] = [];
     const tokenCandidates: TailwindCandidate[] = [];
     const dynamicCandidates: DynamicCandidate[] = [];
@@ -326,6 +325,7 @@ export class SourceParser {
       this.analyzeExpression(node.getWhenTrue(), extractFn, dynamicCandidates, filePath, sourceFile);
       this.analyzeExpression(node.getWhenFalse(), extractFn, dynamicCandidates, filePath, sourceFile);
     } else if (Node.isBinaryExpression(node)) {
+      this.analyzeExpression(node.getLeft(), extractFn, dynamicCandidates, filePath, sourceFile);
       this.analyzeExpression(node.getRight(), extractFn, dynamicCandidates, filePath, sourceFile);
     } else if (Node.isTemplateExpression(node)) {
       const fullText = node.getText();
@@ -399,8 +399,7 @@ export class SourceParser {
         if (varDecl) {
           const initializer = varDecl.getInitializer();
           if (initializer && (Node.isStringLiteral(initializer) || Node.isNoSubstitutionTemplateLiteral(initializer))) {
-            const literalText = initializer.getLiteralText();
-            extractFn(literalText, node.getStart());
+            this.analyzeExpression(initializer, extractFn, dynamicCandidates, filePath, sourceFile);
             return;
           }
         }

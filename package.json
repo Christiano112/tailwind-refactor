@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "packageManager": "pnpm@11.0.0",
   "description": "Tailwind CSS refactoring engine for production codebases",
-  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "author": "Christian Enyia",
   "license": "MIT",
   "scripts": {
     "build": "turbo build",

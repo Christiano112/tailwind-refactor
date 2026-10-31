@@ -1,9 +1,9 @@
 {
   "name": "@tailwind-refactor/core",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "Core primitives, domain types, AST offset patcher, and analysis cache",
-  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "author": "Christian Enyia",
   "license": "MIT",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

@@ -15,4 +15,4 @@
 
 ## 📄 License
 
-MIT © Christian Enyia <christianowebdev@gmail.com>
+MIT © Christian Enyia

@@ -1,8 +1,8 @@
 {
   "name": "@tailwind-refactor/plugin-api",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Public Plugin, Reporter, and Data Model API contracts for tailwind-refactor",
-  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "author": "Christian Enyia",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",

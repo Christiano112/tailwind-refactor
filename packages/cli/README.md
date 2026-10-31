@@ -57,4 +57,4 @@ console.log(refactoredCode);
 
 ## 📄 License
 
-MIT © Christian Enyia <christianowebdev@gmail.com>
+MIT © Christian Enyia

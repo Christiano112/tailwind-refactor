@@ -11,6 +11,13 @@ export type UtilityCategory =
   | 'maxWidth'
   | 'minHeight'
   | 'maxHeight'
+  | 'borderWidth'
+  | 'ringWidth'
+  | 'outlineWidth'
+  | 'fontWeight'
+  | 'fontFamily'
+  | 'opacity'
+  | 'zIndex'
   | 'shadow'
   | 'screens'
   | 'layout'
@@ -193,12 +200,35 @@ export class UtilityRegistry {
       const match = this.valueToTokenMap.get(`${sizingCategory}:${normValue}`);
       if (match) return `${actualPrefix}-${match.token}`;
 
+      const spacingMatch = this.valueToTokenMap.get(`spacing:${normValue}`);
+      if (spacingMatch) return `${actualPrefix}-${spacingMatch.token}`;
+
       const numericStep = parseFloat(normValue);
-      if (!isNaN(numericStep) && isFinite(numericStep) && numericStep > 0) {
+      if (!isNaN(numericStep) && isFinite(numericStep)) {
         const pxVal = `${numericStep * 4}px`;
         const scaleMatch = this.valueToTokenMap.get(`${sizingCategory}:${pxVal}`);
         if (scaleMatch) return `${actualPrefix}-${scaleMatch.token}`;
       }
+    }
+
+    // Percentage dimension utilities (e.g. w-[100%] -> w-full, h-[100vh] -> h-screen)
+    if (utilityPrefix === 'w' || utilityPrefix === 'h') {
+      if (normValue === '100%') return `${actualPrefix}-full`;
+      if (utilityPrefix === 'w' && normValue === '100vw') return `${actualPrefix}-screen`;
+      if (utilityPrefix === 'h' && normValue === '100vh') return `${actualPrefix}-screen`;
+      if (normValue === 'min-content') return `${actualPrefix}-min`;
+      if (normValue === 'max-content') return `${actualPrefix}-max`;
+      if (normValue === 'fit-content') return `${actualPrefix}-fit`;
+    }
+
+    if (utilityPrefix === 'font') {
+      const weightMatch = this.valueToTokenMap.get(`fontWeight:${normValue}`);
+      if (weightMatch) return `font-${weightMatch.token}`;
+
+      const familyMatch = this.valueToTokenMap.get(`fontFamily:${normValue}`);
+      if (familyMatch) return `font-${familyMatch.token}`;
+
+      return null;
     }
 
     if (utilityPrefix === 'text') {
@@ -211,39 +241,94 @@ export class UtilityRegistry {
       return null;
     }
 
-    let category: UtilityCategory | null = null;
+    if (utilityPrefix === 'opacity') {
+      const match = this.valueToTokenMap.get(`opacity:${normValue}`);
+      if (match) return `opacity-${match.token}`;
+      return null;
+    }
+
+    if (utilityPrefix === 'z') {
+      const match = this.valueToTokenMap.get(`zIndex:${normValue}`);
+      if (match) return `${actualPrefix}-${match.token}`;
+      return null;
+    }
+
+    if (utilityPrefix === 'border' || /^border-(t|b|l|r|x|y|s|e)$/.test(utilityPrefix)) {
+      const widthMatch = this.valueToTokenMap.get(`borderWidth:${normValue}`);
+      if (widthMatch) {
+        if (widthMatch.token === 'DEFAULT') return actualPrefix;
+        return `${actualPrefix}-${widthMatch.token}`;
+      }
+
+      const colorMatch = this.valueToTokenMap.get(`color:${normValue}`);
+      if (colorMatch) return `${actualPrefix}-${colorMatch.token}`;
+
+      return null;
+    }
+
+    if (utilityPrefix === 'ring') {
+      const widthMatch = this.valueToTokenMap.get(`ringWidth:${normValue}`);
+      if (widthMatch) {
+        if (widthMatch.token === 'DEFAULT') return actualPrefix;
+        return `${actualPrefix}-${widthMatch.token}`;
+      }
+
+      const colorMatch = this.valueToTokenMap.get(`color:${normValue}`);
+      if (colorMatch) return `${actualPrefix}-${colorMatch.token}`;
+
+      return null;
+    }
+
+    if (utilityPrefix === 'ring-offset') {
+      const widthMatch =
+        this.valueToTokenMap.get(`ringWidth:${normValue}`) ||
+        this.valueToTokenMap.get(`borderWidth:${normValue}`) ||
+        this.valueToTokenMap.get(`spacing:${normValue}`);
+      if (widthMatch) return `${actualPrefix}-${widthMatch.token}`;
+
+      const colorMatch = this.valueToTokenMap.get(`color:${normValue}`);
+      if (colorMatch) return `${actualPrefix}-${colorMatch.token}`;
+
+      return null;
+    }
+
+    if (utilityPrefix === 'outline') {
+      const widthMatch = this.valueToTokenMap.get(`outlineWidth:${normValue}`);
+      if (widthMatch) return `outline-${widthMatch.token}`;
+
+      const colorMatch = this.valueToTokenMap.get(`color:${normValue}`);
+      if (colorMatch) return `outline-${colorMatch.token}`;
+
+      return null;
+    }
+
+    if (utilityPrefix === 'rounded' || utilityPrefix.startsWith('rounded-')) {
+      const match = this.valueToTokenMap.get(`radius:${normValue}`);
+      if (match) {
+        if (match.token === 'DEFAULT') return actualPrefix;
+        return `${actualPrefix}-${match.token}`;
+      }
+      return null;
+    }
+
     if (
       utilityPrefix === 'bg' ||
-      utilityPrefix.startsWith('border') ||
-      utilityPrefix.startsWith('ring') ||
-      utilityPrefix.startsWith('outline') ||
-      utilityPrefix.startsWith('divide') ||
+      utilityPrefix === 'divide' ||
+      utilityPrefix.startsWith('divide-') ||
       utilityPrefix === 'accent' ||
       utilityPrefix === 'caret' ||
       utilityPrefix === 'fill' ||
       utilityPrefix === 'stroke'
     ) {
-      category = 'color';
-    } else if (utilityPrefix === 'rounded' || utilityPrefix.startsWith('rounded-')) {
-      category = 'radius';
-    } else if (UtilityRegistry.SPACING_PREFIXES.has(utilityPrefix)) {
-      category = 'spacing';
+      const match = this.valueToTokenMap.get(`color:${normValue}`);
+      if (match) return `${actualPrefix}-${match.token}`;
+      return null;
     }
 
-    if (!category) return null;
+    if (UtilityRegistry.SPACING_PREFIXES.has(utilityPrefix)) {
+      const match = this.valueToTokenMap.get(`spacing:${normValue}`);
+      if (match) return `${actualPrefix}-${match.token}`;
 
-    const key = `${category}:${normValue}`;
-    const match = this.valueToTokenMap.get(key);
-
-    if (match) {
-      if (category === 'radius') {
-        if (match.token === 'DEFAULT') return actualPrefix;
-        return `${actualPrefix}-${match.token}`;
-      }
-      return `${actualPrefix}-${match.token}`;
-    }
-
-    if (category === 'spacing') {
       let numVal: number | null = null;
       if (normValue.endsWith('px')) {
         const parsed = parseFloat(normValue.slice(0, -2));
@@ -261,6 +346,8 @@ export class UtilityRegistry {
         const cleanVal = Number(`${Math.round(Number(`${numVal}e4`))}e-4`);
         return `${actualPrefix}-${cleanVal}`;
       }
+
+      return null;
     }
 
     return null;
@@ -325,6 +412,13 @@ export class UtilityRegistry {
       ['colors', 'color'],
       ['borderRadius', 'radius'],
       ['fontSize', 'typography'],
+      ['borderWidth', 'borderWidth'],
+      ['ringWidth', 'ringWidth'],
+      ['outlineWidth', 'outlineWidth'],
+      ['fontWeight', 'fontWeight'],
+      ['fontFamily', 'fontFamily'],
+      ['opacity', 'opacity'],
+      ['zIndex', 'zIndex'],
       ['minWidth', 'minWidth'],
       ['maxWidth', 'maxWidth'],
       ['minHeight', 'minHeight'],

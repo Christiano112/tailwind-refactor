@@ -198,18 +198,26 @@ export async function fix(options: RefactorNodeOptions = {}): Promise<FixResult>
 
   let filesFixed = 0;
   let totalTransformationsApplied = 0;
+  const errors: { file: string; message: string }[] = [];
 
   for (const filePath of files) {
-    const code = readFileSync(filePath, 'utf-8');
-    const analysis = engine.analyzeCode(code, filePath);
+    try {
+      const code = readFileSync(filePath, 'utf-8');
+      const analysis = engine.analyzeCode(code, filePath);
 
-    if (analysis.length > 0) {
-      if (!options.dryRun) {
-        const patched = engine.patchCode(code, analysis);
-        writeFileSync(filePath, patched, 'utf-8');
+      if (analysis.length > 0) {
+        if (!options.dryRun) {
+          const patched = engine.patchCode(code, analysis);
+          writeFileSync(filePath, patched, 'utf-8');
+        }
+        filesFixed++;
+        totalTransformationsApplied += analysis.length;
       }
-      filesFixed++;
-      totalTransformationsApplied += analysis.length;
+    } catch (err: unknown) {
+      errors.push({
+        file: filePath,
+        message: err instanceof Error ? err.message : String(err),
+      });
     }
   }
 
@@ -218,5 +226,6 @@ export async function fix(options: RefactorNodeOptions = {}): Promise<FixResult>
     totalTransformationsApplied,
     isDryRun: !!options.dryRun,
     durationMs: Date.now() - startTime,
+    errors,
   };
 }

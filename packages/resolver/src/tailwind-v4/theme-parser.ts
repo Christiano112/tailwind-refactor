@@ -44,8 +44,8 @@ export class TailwindV4ThemeParser {
         const resolvedVal = resolveValue(rawVal);
         if (!resolvedVal || resolvedVal.startsWith('var(')) continue;
 
-        // Check explicit categories (--color-*, --spacing-*, --radius-*, --font-*)
-        const categoryMatch = prop.match(/^--(spacing|color|radius|font)-(.+)$/i);
+        // Check explicit categories (--color-*, --spacing-*, --radius-*, --font-weight-*, --font-*, --text-*)
+        const categoryMatch = prop.match(/^--(spacing|color|radius|font-weight|font|text)-(.+)$/i);
 
         if (categoryMatch) {
           const category = categoryMatch[1].toLowerCase();
@@ -57,6 +57,35 @@ export class TailwindV4ThemeParser {
               const remVal = parseFloat(resolvedVal);
               if (!isNaN(remVal)) {
                 registry.register({ name: tokenName, category: 'spacing', value: `${remVal * 16}px`, source: 'theme' });
+              }
+            } else if (resolvedVal.endsWith('px')) {
+              const pxVal = parseFloat(resolvedVal);
+              if (!isNaN(pxVal)) {
+                registry.register({ name: tokenName, category: 'spacing', value: `${pxVal / 16}rem`, source: 'theme' });
+              }
+            }
+          } else if (category === 'text') {
+            const fontToken = tokenName === 'default' ? 'DEFAULT' : tokenName;
+            registry.register({ name: fontToken, category: 'typography', value: resolvedVal, source: 'theme' });
+            if (resolvedVal.endsWith('rem')) {
+              const remVal = parseFloat(resolvedVal);
+              if (!isNaN(remVal)) {
+                registry.register({
+                  name: fontToken,
+                  category: 'typography',
+                  value: `${remVal * 16}px`,
+                  source: 'theme',
+                });
+              }
+            } else if (resolvedVal.endsWith('px')) {
+              const pxVal = parseFloat(resolvedVal);
+              if (!isNaN(pxVal)) {
+                registry.register({
+                  name: fontToken,
+                  category: 'typography',
+                  value: `${pxVal / 16}rem`,
+                  source: 'theme',
+                });
               }
             }
           } else if (category === 'color') {
@@ -74,25 +103,39 @@ export class TailwindV4ThemeParser {
                   source: 'theme',
                 });
               }
-            }
-          } else if (category === 'font') {
-            const fontToken = tokenName === 'default' ? 'DEFAULT' : tokenName;
-            registry.register({ name: fontToken, category: 'typography', value: resolvedVal, source: 'theme' });
-            if (resolvedVal.endsWith('rem')) {
-              const remVal = parseFloat(resolvedVal);
-              if (!isNaN(remVal)) {
+            } else if (resolvedVal.endsWith('px')) {
+              const pxVal = parseFloat(resolvedVal);
+              if (!isNaN(pxVal)) {
                 registry.register({
-                  name: fontToken,
-                  category: 'typography',
-                  value: `${remVal * 16}px`,
+                  name: radiusToken,
+                  category: 'radius',
+                  value: `${pxVal / 16}rem`,
                   source: 'theme',
                 });
               }
             }
+          } else if (category === 'font') {
+            const fontToken = tokenName === 'default' ? 'DEFAULT' : tokenName;
+            registry.register({ name: fontToken, category: 'fontFamily', value: resolvedVal, source: 'theme' });
+          } else if (category === 'font-weight') {
+            registry.register({ name: tokenName, category: 'fontWeight', value: resolvedVal, source: 'theme' });
           }
         } else {
           // Unprefixed or custom variables (e.g. --sc-primary-300: #1a8cff)
           const tokenName = prop.slice(2).toLowerCase();
+
+          // Do not treat variables named with prefixes (like text-*, font-*) as spacing
+          if (tokenName.startsWith('text-') || tokenName.startsWith('font-') || tokenName.startsWith('breakpoint-')) {
+            if (tokenName.startsWith('text-')) {
+              registry.register({
+                name: tokenName.slice(5),
+                category: 'typography',
+                value: resolvedVal,
+                source: 'theme',
+              });
+            }
+            continue;
+          }
 
           // Auto-detect category based on value format (hex colors, rgb, hsl, oklch, px, rem)
           if (/^#(?:[0-9a-fA-F]{3,4}){1,2}$|^rgba?\(|^hsla?\(|^oklch\(/i.test(resolvedVal)) {

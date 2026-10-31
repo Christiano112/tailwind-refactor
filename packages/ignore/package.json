@@ -1,9 +1,9 @@
 {
   "name": "@tailwind-refactor/ignore",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "File glob ignores and inline disable comments parser for tailwind-refactor",
-  "author": "Christian Enyia <christianowebdev@gmail.com>",
+  "author": "Christian Enyia",
   "license": "MIT",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

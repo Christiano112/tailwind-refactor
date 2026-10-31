@@ -102,4 +102,4 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ## 📄 License
 
-MIT © Christian Enyia <christianowebdev@gmail.com>
+MIT © Christian Enyia

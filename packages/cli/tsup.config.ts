@@ -9,7 +9,7 @@ export default defineConfig({
   format: ['cjs', 'esm'],
   target: 'node20',
   outDir: 'dist',
-  clean: true,
+  clean: false,
   shims: true,
   tsconfig: 'tsconfig.json',
   noExternal: [/^@tailwind-refactor\//, 'postcss', 'picocolors'],

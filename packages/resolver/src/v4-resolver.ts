@@ -57,11 +57,11 @@ export class TailwindV4Resolver implements TailwindResolver {
 }
 
 /**
- * Auto-detects CSS theme files in a workspace directory or any of its parent directories,
- * and creates the appropriate TailwindResolver instance.
+ * Auto-detects CSS theme files or Tailwind configuration in a workspace directory
+ * or any of its parent directories, and creates the appropriate TailwindResolver instance.
  */
 export function createResolverForWorkspace(targetDir: string): TailwindV3Resolver | TailwindV4Resolver {
-  const candidates = [
+  const cssCandidates = [
     'app/globals.css',
     'src/app/globals.css',
     'globals.css',
@@ -74,20 +74,54 @@ export function createResolverForWorkspace(targetDir: string): TailwindV3Resolve
     'styles/theme.css',
   ];
 
+  const configCandidates = [
+    'tailwind.config.js',
+    'tailwind.config.cjs',
+    'tailwind.config.mjs',
+    'tailwind.config.ts',
+    'tailwind.config.json',
+  ];
+
   let currentDir = resolve(targetDir);
+  let firstCssContent: string | null = null;
+
   while (true) {
-    for (const candidate of candidates) {
+    // 1. Check for CSS candidates with @theme (Tailwind v4 indicator)
+    for (const candidate of cssCandidates) {
       const fullPath = resolve(currentDir, candidate);
       try {
         if (existsSync(fullPath) && statSync(fullPath).isFile()) {
           const cssContent = readFileSync(fullPath, 'utf-8');
-          return new TailwindV4Resolver(cssContent);
+          if (/@theme\b/.test(cssContent)) {
+            return new TailwindV4Resolver(cssContent);
+          }
+          if (!firstCssContent) {
+            firstCssContent = cssContent;
+          }
         }
       } catch {}
     }
+
+    // 2. Check for Tailwind v3 config candidates
+    for (const candidate of configCandidates) {
+      const fullPath = resolve(currentDir, candidate);
+      try {
+        if (existsSync(fullPath) && statSync(fullPath).isFile()) {
+          const loaded = TailwindV3ConfigLoader.loadConfigFile(fullPath);
+          if (loaded) {
+            return new TailwindV3Resolver((loaded as any).theme || loaded);
+          }
+        }
+      } catch {}
+    }
+
     const parentDir = dirname(currentDir);
     if (parentDir === currentDir) break;
     currentDir = parentDir;
+  }
+
+  if (firstCssContent) {
+    return new TailwindV4Resolver(firstCssContent);
   }
 
   return new TailwindV3Resolver();

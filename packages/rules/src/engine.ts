@@ -10,6 +10,7 @@ import { type IgnoreContext, InlineIgnoreMatcher } from '@tailwind-refactor/igno
 import { type DebugContextCollector, ErrorCode, Logger, ToolError } from '@tailwind-refactor/logger';
 import { type DynamicCandidate, SourceParser } from '@tailwind-refactor/parser';
 import { createResolverForWorkspace, type TailwindResolver } from '@tailwind-refactor/resolver';
+import { minimatch } from 'minimatch';
 import { PreferTokenValuesRule } from './prefer-token-values.js';
 import type { Rule } from './rule.interface.js';
 import { ArbitraryValueNormalizationRule } from './rules/arbitrary-value-normalization.js';
@@ -66,6 +67,17 @@ import { UnsafeArbitraryValuesRule } from './rules/unsafe-arbitrary-values.js';
  * @see {@link PluginSandbox}
  */
 export class RefactorEngine {
+  /**
+   * Canonical mapping of confidence levels to numeric ordering values.
+   * Lower number = higher confidence. Used for threshold filtering in both
+   * `analyzeCodeWithAnalysis` and `patchCode` to avoid duplication.
+   */
+  private static readonly CONFIDENCE_ORDER: Record<string, number> = {
+    safe: 0,
+    suggestion: 1,
+    experimental: 2,
+    uncertain: 2,
+  };
   /** The AST parser for extracting class candidates from source code. */
   private parser: SourceParser;
   /** The active token resolver (v3 or v4) for utility-to-token lookups. */
@@ -216,15 +228,8 @@ export class RefactorEngine {
       filePath,
     };
 
-    const stringCandidates =
-      parseResult.stringCandidates && parseResult.stringCandidates.length > 0
-        ? parseResult.stringCandidates
-        : parseResult.safeCandidates.filter((c) => c.value.includes(' '));
-
-    const tokenCandidates =
-      parseResult.tokenCandidates && parseResult.tokenCandidates.length > 0
-        ? parseResult.tokenCandidates
-        : parseResult.safeCandidates.filter((c) => !c.value.includes(' '));
+    const stringCandidates = parseResult.stringCandidates;
+    const tokenCandidates = parseResult.tokenCandidates;
 
     for (const rule of this.rules) {
       if (rule.filePattern && !this.matchesFilePattern(filePath, rule.filePattern)) {
@@ -248,14 +253,11 @@ export class RefactorEngine {
           }
 
           if (transformation) {
-            const thresholdOrder: Record<string, number> = {
-              safe: 0,
-              suggestion: 1,
-              experimental: 2,
-              uncertain: 2,
-            };
             const threshold = this.config.confidenceThreshold ?? 'safe';
-            if ((thresholdOrder[transformation.confidence] ?? 99) > (thresholdOrder[threshold] ?? 0)) {
+            if (
+              (RefactorEngine.CONFIDENCE_ORDER[transformation.confidence] ?? 99) >
+              (RefactorEngine.CONFIDENCE_ORDER[threshold] ?? 0)
+            ) {
               continue;
             }
             const isDuplicate = transformations.some(
@@ -322,15 +324,11 @@ export class RefactorEngine {
    * @see {@link applyFilePatches}
    */
   patchCode(code: string, transformations: Transformation[]): string {
-    const thresholdOrder: Record<string, number> = {
-      safe: 0,
-      suggestion: 1,
-      experimental: 2,
-      uncertain: 2,
-    };
     const threshold = this.config.confidenceThreshold ?? 'safe';
     const valid = transformations.filter(
-      (t) => t.location && (thresholdOrder[t.confidence] ?? 99) <= (thresholdOrder[threshold] ?? 0)
+      (t) =>
+        t.location &&
+        (RefactorEngine.CONFIDENCE_ORDER[t.confidence] ?? 99) <= (RefactorEngine.CONFIDENCE_ORDER[threshold] ?? 0)
     );
 
     // Separate string-level candidates (contains spaces) from token-level candidates
@@ -363,14 +361,13 @@ export class RefactorEngine {
         }
 
         // Deduplicate and sort the tokens in a single unified pass
-        const res = this.resolver as {
-          deduplicateClasses?: (t: string[]) => string[];
-          sortClasses?: (t: string[]) => string[];
-        };
         const tokens = updatedString.split(/\s+/).filter(Boolean);
         const deduped =
-          typeof res.deduplicateClasses === 'function' ? res.deduplicateClasses(tokens) : Array.from(new Set(tokens));
-        const sorted = typeof res.sortClasses === 'function' ? res.sortClasses(deduped) : deduped;
+          typeof this.resolver.deduplicateClasses === 'function'
+            ? this.resolver.deduplicateClasses(tokens)
+            : Array.from(new Set(tokens));
+        const sorted =
+          typeof this.resolver.sortClasses === 'function' ? this.resolver.sortClasses(deduped) : deduped;
         const finalReplacement = sorted.join(' ');
 
         mergedStringTransforms.push({
@@ -431,9 +428,7 @@ export class RefactorEngine {
   private matchesFilePattern(filePath: string, pattern?: RegExp | string[]): boolean {
     if (!pattern) return true;
     if (pattern instanceof RegExp) return pattern.test(filePath);
-    return pattern.some((p) => {
-      const normalized = p.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*');
-      return new RegExp(normalized).test(filePath);
-    });
+    const normalized = filePath.replace(/\\/g, '/');
+    return pattern.some((p) => minimatch(normalized, p, { dot: true }));
   }
 }
